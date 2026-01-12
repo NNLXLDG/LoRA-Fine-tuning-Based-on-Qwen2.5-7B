@@ -1,0 +1,63 @@
+# =========================
+# Model
+# =========================
+model: /hy-tmp/models/qwen2.5-7b-instruct
+model_type: causal_lm
+
+# =========================
+# Dataset
+# =========================
+data_root: /hy-tmp/datasets/ultrachat_200k
+dataset_name: ultrachat
+dataset_format: parquet
+dataset_split: train
+dataset_text_field: text
+
+limit: 1000              # 消融实验用子集（你现在就在用）
+max_seq_len: 1024
+
+# =========================
+# Training
+# =========================
+task_type: sft
+epochs: 1.0
+learning_rate: 2.0e-4
+
+per_device_train_batch_size: 1
+gradient_accumulation_steps: 16
+
+logging_steps: 1
+save_strategy: steps
+save_steps: 100000        # 避免中间碎 checkpoint
+save_total_limit: 1
+
+# =========================
+# Precision / Memory
+# =========================
+bf16: true
+fp16: false
+gradient_checkpointing: true
+
+# =========================
+# LoRA
+# =========================
+use_lora: true
+lora_r: 8
+lora_alpha: 32
+lora_dropout: 0.05
+lora_target_modules: all   # Qwen 官方推荐
+
+# =========================
+# Optimizer / Scheduler
+# =========================
+optimizer: adamw
+weight_decay: 0.0
+lr_scheduler_type: linear
+warmup_ratio: 0.03
+
+# =========================
+# Misc
+# =========================
+remove_unused_columns: false
+report_to: none
+seed: 42
